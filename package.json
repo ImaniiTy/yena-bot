@@ -1,0 +1,28 @@
+{
+  "name": "yena-bot",
+  "version": "1.0.0",
+  "description": "A simple discord bot to play with",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ImaniiTy/yena-bot.git"
+  },
+  "engines": {
+    "node": "14.5.x"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ImaniiTy/yena-bot/issues"
+  },
+  "homepage": "https://github.com/ImaniiTy/yena-bot#readme",
+  "dependencies": {
+    "@discordjs/opus": "0.3.2",
+    "discord.js": "12.2.0",
+    "express": "4.17.1",
+    "fluent-ffmpeg": "2.1.2"
+  }
+}
