@@ -3,8 +3,6 @@ const client = require("./bot");
 const app = express();
 process.env.DISCORD_TOKEN || require('dotenv').config();
 
-require('dotenv').config()
-
 app.get("/", (req, res) => {
   res.send("Ping");
 });
