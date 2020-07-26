@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection()
 
@@ -13,17 +13,17 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-client.on('message', message => {
+client.on("message", (message) => {
     // ignore messages without the prefix
-    if (!message.content.startsWith(prefix)) return;
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/)
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
     if (command === 'ping') {
         client.commands.get('ping').execute(message, args)
     }
-})
+});
 
 // login to Discord with your app's token
 module.exports = client;
