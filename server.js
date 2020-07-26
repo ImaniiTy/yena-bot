@@ -10,4 +10,5 @@ app.listen(process.env.PORT, () =>
   console.log(`listening on  ${process.env.PORT}`)
 );
 
-client.login(process.env.DISCORD_TOKEN);
+// client.login(process.env.DISCORD_TOKEN);
+client.login("NzM2NzI5OTk0NTI4Njg2MTAw.XxzDRg.LZpWygXTgXy19j10sOwtAW9p_L8");
