@@ -56,8 +56,6 @@ class MusicModule {
                 volume: 0.05,
             })
             .on("finish", async () => {
-                console.log("music finished");
-                console.log(this.playlist);
                 if (this.playlist.length) {
                     await this._playNextMusic();
                 } else {
@@ -67,10 +65,6 @@ class MusicModule {
             })
             .on("error", (e) => {
                 console.log(e);
-            }).on("debug", (info) => {
-                console.log("info");
-            }).on("unpipe", (src) => {
-                console.log(src);
             });
     }
 
