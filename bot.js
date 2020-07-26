@@ -3,6 +3,8 @@ const botModules = require("./modules");
 const config = require("./bot_config.json");
 const client = new Discord.Client();
 
+client.moongose = require('./mongoose_start')
+
 function loadCommands() {
     client.commands = new Discord.Collection();
     for (const module in botModules) {

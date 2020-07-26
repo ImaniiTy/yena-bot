@@ -24,6 +24,7 @@
     "discord.js": "12.2.0",
     "express": "4.17.1",
     "fluent-ffmpeg": "2.1.2",
+    "mongoose": "^5.9.25",
     "ytdl-core-discord": "1.2.1"
   },
   "devDependencies": {
