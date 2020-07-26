@@ -35,6 +35,10 @@ class MusicModule {
         }
     }
 
+    async skip(message, args) {
+        await this._playNextMusic();
+    }
+
     async debug(message, args) {
         console.log(this.playlist);
         console.log(this.currentMusic);
