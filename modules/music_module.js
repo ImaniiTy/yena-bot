@@ -51,7 +51,7 @@ class MusicModule {
                 type: "opus",
                 volume: 0.05,
             })
-            .on("finish", () => {
+            .on("finish", async () => {
                 console.log("music finished");
                 console.log(this.playlist);
                 if (this.playlist.length) {
