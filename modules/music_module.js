@@ -35,14 +35,19 @@ class MusicModule {
         }
     }
 
-    async skip(message, args) {}
+    async debug(message, args) {
+        console.log(this.playlist);
+        console.log(this.currentMusic);
+        console.log(this.currentStream);
+
+    }
 
     async _playNextMusic() {
         this.currentMusic = this.playlist.shift();
 
-        const audioPipe = this._getCurrentMusicPipe();
+        const audioPipe = await this._getCurrentMusicPipe();
         this.currentStream = this.connection
-            .play(await audioPipe, {
+            .play(audioPipe, {
                 type: "opus",
                 volume: 0.05,
             })
@@ -50,7 +55,7 @@ class MusicModule {
                 console.log("music finished");
                 console.log(this.playlist);
                 if (this.playlist.length) {
-                    this._playNextMusic();
+                    await this._playNextMusic();
                 } else {
                     this.isPlaying = false;
                     this.connection.disconnect();
