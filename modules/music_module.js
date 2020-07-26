@@ -4,7 +4,12 @@ const ytdl = require("ytdl-core-discord");
 class MusicModule {
     constructor() {
         this.playlist = [];
+        this.isPlaying = false;
+        this.connection;
+        this.currentStream;
+        this.currentMusic;
     }
+
     /**
      *
      * @param {Message} message
@@ -14,21 +19,48 @@ class MusicModule {
         const channel = message.member.voice.channel;
 
         if (channel) {
-            const connection = await channel.join();
+            this.playlist.push(args[0]);
 
-            const stream = connection.play(await ytdl(args[0], { filter: "audioonly" }), {
+            if (this.isPlaying) {
+                return;
+            }
+
+            if (!this.connection) {
+                this.connection = await channel.join();
+            }
+
+            this.isPlaying = true;
+
+            await this._playNextMusic();
+        }
+    }
+
+    async skip(message, args) {}
+
+    async _playNextMusic() {
+        this.currentMusic = this.playlist.shift();
+
+        const audioPipe = this._getCurrentMusicPipe();
+        this.currentStream = this.connection
+            .play(await audioPipe, {
                 type: "opus",
                 volume: 0.05,
-            });
-
-            stream.on("finish", () => {
-                connection.disconnect();
-            });
-
-            stream.on("error", (e) => {
+            })
+            .on("finish", () => {
+                if (this.playlist.length) {
+                    this._playNextMusic();
+                } else {
+                    this.isPlaying = false;
+                    this.connection.disconnect();
+                }
+            })
+            .on("error", (e) => {
                 console.log(e);
             });
-        }
+    }
+
+    _getCurrentMusicPipe() {
+        return ytdl(this.currentMusic, { filter: "audioonly" });
     }
 
     _getCommands() {
