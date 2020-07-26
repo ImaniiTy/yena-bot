@@ -1,6 +1,7 @@
 const express = require("express");
 const client = require("./bot");
 const app = express();
+require('dotenv').config()
 
 app.get("/", (req, res) => {
   res.send("Ping");
@@ -11,4 +12,4 @@ app.listen(process.env.PORT, () =>
 );
 
 // client.login(process.env.DISCORD_TOKEN);
-client.login("NzM2NzI5OTk0NTI4Njg2MTAw.XxzDRg.LZpWygXTgXy19j10sOwtAW9p_L8");
+client.login(process.env.DISCORD_TOKEN);
