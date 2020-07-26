@@ -9,7 +9,7 @@ module.exports = {
             useUnifiedTopology: true
         };
 
-        mongoose_start.connect(process.env.MongoDB_Link, dbOptions);
+        mongoose_start.connect(process.env.MONGODB_URI, dbOptions);
         mongoose_start.set('useFindAndModify', false);
 
         mongoose_start.connection.on('connected', () => {
