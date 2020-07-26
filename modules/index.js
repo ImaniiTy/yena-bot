@@ -1,5 +1,3 @@
-let commands = [];
-
 require("fs")
     .readdirSync(__dirname + "/")
     .forEach(function (file) {
@@ -7,8 +5,6 @@ require("fs")
             const name = file.replace(".js", "");
             const _export = require("./" + file);
 
-            commands.push([name, _export]);
+            exports[name] = _export;
         }
     });
-
-module.exports = commands;

@@ -1,11 +1,19 @@
 const Discord = require("discord.js");
+const botModules = require("./modules");
+const config = require("./bot_config.json");
 const client = new Discord.Client();
 
-const commands = require("./commands");
+function loadCommands() {
+    client.commands = new Discord.Collection();
+    for (const module in botModules) {
+        const commands = botModules[module]._getCommands();
+        for (const command of commands) {
+            client.commands.set(command, botModules[module]);
+        }
+    }
+}
 
-const prefix = "..";
-
-client.commands = new Discord.Collection(commands);
+loadCommands();
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -15,15 +23,14 @@ client.once("ready", () => {
 
 client.on("message", (message) => {
     // ignore messages without the prefix
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
     if (!client.commands.has(command)) return;
 
     try {
-        client.commands.get(command).execute(message, args);
+        client.commands.get(command)[command](message, args);
     } catch (error) {
         console.error(error);
         message.reply("there was an error trying to execute that command!");
