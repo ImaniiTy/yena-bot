@@ -58,6 +58,10 @@ class MusicModule {
             })
             .on("error", (e) => {
                 console.log(e);
+            }).on("close", () => {
+                console.log(closed);
+            }).on("unpipe", (src) => {
+                console.log(src);
             });
     }
 
