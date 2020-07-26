@@ -60,7 +60,7 @@ class MusicModule {
     }
 
     _getCurrentMusicPipe() {
-        return ytdl(this.currentMusic, { filter: "audioonly" });
+        return ytdl(this.currentMusic, { filter: "audioonly", quality: "highestaudio" });
     }
 
     _getCommands() {
