@@ -1,7 +1,7 @@
 const express = require("express");
 const client = require("./bot");
 const app = express();
-require('dotenv').config()
+process.env.DISCORD_TOKEN || require('dotenv').config();
 
 app.get("/", (req, res) => {
   res.send("Ping");
