@@ -11,5 +11,5 @@ app.listen(process.env.PORT, () =>
   console.log(`listening on  ${process.env.PORT}`)
 );
 
-// client.login(process.env.DISCORD_TOKEN);
+client.moongose.init();
 client.login(process.env.DISCORD_TOKEN);
