@@ -47,6 +47,8 @@ class MusicModule {
                 volume: 0.05,
             })
             .on("finish", () => {
+                console.log("music finished");
+                console.log(this.playlist);
                 if (this.playlist.length) {
                     this._playNextMusic();
                 } else {
