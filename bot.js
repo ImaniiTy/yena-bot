@@ -1,39 +1,34 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
 const client = new Discord.Client();
-client.commands = new Discord.Collection()
 
-const commands = require('./commands')
-
+const commands = require("./commands");
 
 const prefix = "..";
 
+client.commands = new Discord.Collection(commands);
+
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
-client.once('ready', () => {
-	console.log('Ready!');
+client.once("ready", () => {
+    console.log("Ready!");
 });
 
-client.on('message', message => {
+client.on("message", (message) => {
     // ignore messages without the prefix
-    if (!message.content.startsWith(prefix)) return;
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/)
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
-    for (const file of commandFiles) {
-        const command = require(`./commands/${file}`);
+    if (!client.commands.has(command)) return;
 
-        // set a new item in the Collection
-        // with the key as the command name and the value as the exported module
-        client.commands.set(command.name, command);
+    try {
+        client.commands.get(command).execute(message, args);
+    } catch (error) {
+        console.error(error);
+        message.reply("there was an error trying to execute that command!");
     }
-
-    message.channel.send(command);
-    if(message.content === `${prefix}ping`) {
-        message.channel.send('Pong.')
-        message.channel.send(`${client.emojis.cache.get('662838179438788619')}`)
-    }
-})
+});
 
 // login to Discord with your app's token
 module.exports = client;
