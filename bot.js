@@ -27,7 +27,7 @@ client.on('message', message => {
         // with the key as the command name and the value as the exported module
         client.commands.set(command.name, command);
     }
-    
+
     message.channel.send(command);
     if(message.content === `${prefix}ping`) {
         message.channel.send('Pong.')
