@@ -35,6 +35,10 @@ class MusicModule {
         }
     }
 
+    async skip(message, args) {
+        await this._playNextMusic();
+    }
+
     async debug(message, args) {
         console.log(this.playlist);
         console.log(this.currentMusic);
@@ -52,9 +56,7 @@ class MusicModule {
                 volume: 0.05,
                 highWaterMark: 1<<25
             })
-            .on("finish", () => {
-                console.log("music finished");
-                console.log(this.playlist);
+            .on("finish", async () => {
                 if (this.playlist.length) {
                     this._playNextMusic();
                 } else {
@@ -64,15 +66,11 @@ class MusicModule {
             })
             .on("error", (e) => {
                 console.log(e);
-            }).on("close", () => {
-                console.log(closed);
-            }).on("unpipe", (src) => {
-                console.log(src);
             });
     }
 
     _getCurrentMusicPipe() {
-        return ytdl(this.currentMusic, { filter: "audioonly", quality: "highestaudio" });
+        return ytdl(this.currentMusic, { filter: "audioonly", quality: "highestaudio", highWaterMark: 1<<25 });
     }
 
     _getCommands() {
