@@ -50,12 +50,13 @@ class MusicModule {
             .play(audioPipe, {
                 type: "opus",
                 volume: 0.05,
+                highWaterMark: 1<<25
             })
             .on("finish", () => {
                 console.log("music finished");
                 console.log(this.playlist);
                 if (this.playlist.length) {
-                    await this._playNextMusic();
+                    this._playNextMusic();
                 } else {
                     this.isPlaying = false;
                     this.connection.disconnect();
