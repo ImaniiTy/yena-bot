@@ -56,7 +56,7 @@ class MusicModule {
                 volume: 0.05,
                 highWaterMark: 1<<25
             })
-            .on("finish", async () => {
+            .on("finish", () => {
                 if (this.playlist.length) {
                     this._playNextMusic();
                 } else {
