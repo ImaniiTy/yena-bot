@@ -8,6 +8,7 @@ class MusicModule {
         this.playlist = [];
         this.isPlaying = false;
         this.isLoading = false;
+        this.maxTries = 3;
         this.messageChannel;
         this.radioInterval;
         this.connection;
@@ -98,12 +99,19 @@ class MusicModule {
             });
     }
 
-    async _playRadio(url) {
+    async _playRadio(url, currentTries = 0) {
         this.isLoading = true;
         const response = await axios({
             method: "get",
             url: url,
             responseType: "stream",
+        }).catch((e) => {
+            if (currentTries < this.maxTries) {
+                this.messageChannel.send("Error trying to connect to radio stream, trying again...");
+                setTimeout(() => this._playRadio(url, currentTries + 1), 2000);
+            } else {
+                this.messageChannel.send("Can't connnect to radio stream, try again later");
+            }
         });
 
         mm.parseStream(response.data, { mimeType: "audio/ogg" }).then((metadata) => {
