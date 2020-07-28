@@ -21,10 +21,15 @@
   "homepage": "https://github.com/ImaniiTy/yena-bot#readme",
   "dependencies": {
     "@discordjs/opus": "0.3.2",
+    "axios": "0.19.2",
     "discord.js": "12.2.0",
     "express": "4.17.1",
     "fluent-ffmpeg": "2.1.2",
     "mongoose": "^5.9.25",
+    "music-metadata": "7.0.0",
+    "ogg-parser": "0.3.1",
+    "prism-media": "1.2.2",
+    "ws": "7.3.1",
     "ytdl-core-discord": "1.2.1"
   },
   "devDependencies": {
