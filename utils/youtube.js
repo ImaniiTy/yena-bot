@@ -49,7 +49,7 @@ class Youtube {
 class YoutubeVideoInfo {
     constructor(rawData) {
         this.url = baseVideoURL + rawData.id.videoId;
-        this.title = entitites.decode(rawData.snippet.title);//.replace(/\[|\]/g, (m) => `\\${m}`);
+        this.title = entitites.decode(rawData.snippet.title).replace(/\[/g, (m) => ``);
         this.thumbnailURL = rawData.snippet.thumbnails.default.url;
         this.description = rawData.snippet.description;
         this.duration = rawData.duration;
