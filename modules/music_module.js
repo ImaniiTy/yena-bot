@@ -1,7 +1,9 @@
 const { Message, VoiceChannel } = require("discord.js");
 const Youtube = require("../utils/youtube");
+const Format = require("../utils/format");
 const ytdl = require("ytdl-core-discord");
 const mm = require("music-metadata");
+const { response } = require("express");
 const axios = require("axios").default;
 
 class MusicModule {
@@ -23,25 +25,43 @@ class MusicModule {
      * @param {*} args
      */
     async play(message, args) {
-        if (channel) {
-            this.playlist.push(args[0]);
+        this.playlist.push(args[0]);
 
-            if (this.isPlaying) {
-                return;
-            }
-
-            await this._tryConnectChannel(message);
-
-            this.isPlaying = true;
-
-            await this._playNextMusic();
+        if (this.isPlaying) {
+            return;
         }
+
+        await this._tryConnectChannel(message);
+
+        this.isPlaying = true;
+
+        await this._playNextMusic();
     }
 
+    /**
+     *
+     * @param {Message} message
+     * @param {*} args
+     */
     async search(message, args) {
         const query = args.join(" ");
-        const result = await Youtube.search(query);
-        console.log(result);
+        const results = await Youtube.search(query);
+
+        const filter = (res) => {
+            return !isNaN(res.content) && parseInt(res.content) > 0 && parseInt(res.content) <= results.length;
+        };
+        message.channel.send({ embed: Format.searchEmbed(message, results) }).then((sendedMessage) => {
+            message.channel
+                .awaitMessages(filter, { max: 1, time: 20000 , errors: ["max"]})
+                .then((collected) => {
+                    const value = parseInt(collected.first().content);
+                    this.play(message, [results[value - 1].url]);
+                })
+                .catch((collected) => {
+                    console.log("error" + collected);
+                    // sendedMessage.delete();
+                });
+        });
     }
 
     async skip(message, args) {

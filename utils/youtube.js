@@ -14,7 +14,7 @@ class Youtube {
                     q: query,
                     key: process.env.YOUTUBE_API_KEY,
                     type: "video",
-                    maxResults: 10,
+                    maxResults: 6,
                 },
             });
             // map((item) => new YoutubeVideoInfo(item))
