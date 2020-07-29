@@ -1,9 +1,9 @@
 const Discord = require("discord.js");
 const botModules = require("./modules");
-const config = require("./bot_config.json");
+const config = require(process.env.MODE === "DEV" ? "./bot_config_dev.json" : "./bot_config.json");
 const client = new Discord.Client();
 
-client.moongose = require('./mongoose_start')
+client.moongose = require("./mongoose_start");
 
 function loadCommands() {
     client.commands = new Discord.Collection();
@@ -16,7 +16,6 @@ function loadCommands() {
 }
 
 loadCommands();
-
 
 // this event will only trigger one time after logging in
 client.once("ready", () => {
