@@ -3,7 +3,6 @@ const Youtube = require("../utils/youtube");
 const Format = require("../utils/format");
 const ytdl = require("ytdl-core-discord");
 const mm = require("music-metadata");
-const { response } = require("express");
 const axios = require("axios").default;
 
 class MusicModule {
@@ -52,14 +51,13 @@ class MusicModule {
         };
         message.channel.send({ embed: Format.searchEmbed(message, results) }).then((sendedMessage) => {
             message.channel
-                .awaitMessages(filter, { max: 1, time: 20000 , errors: ["max"]})
+                .awaitMessages(filter, { max: 1, time: 20000, errors: ["max"] })
                 .then((collected) => {
                     const value = parseInt(collected.first().content);
                     this.play(message, [results[value - 1].url]);
                 })
                 .catch((collected) => {
                     console.log("error" + collected);
-                    // sendedMessage.delete();
                 });
         });
     }
@@ -111,7 +109,6 @@ class MusicModule {
             .play(audioPipe, {
                 type: "opus",
                 volume: 0.05,
-                highWaterMark: 1 << 25,
             })
             .on("finish", () => {
                 if (this.playlist.length) {
@@ -149,8 +146,7 @@ class MusicModule {
         this.currentStream = this.connection
             .play(response.data, {
                 type: "ogg/opus",
-                volume: 0.05,
-                highWaterMark: 1 << 25,
+                volume: 0.8,
             })
             .on("error", (e) => {
                 console.log(e);
