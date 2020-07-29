@@ -1,4 +1,5 @@
 const { Message, VoiceChannel } = require("discord.js");
+const Youtube = require("../utils/youtube");
 const ytdl = require("ytdl-core-discord");
 const mm = require("music-metadata");
 const axios = require("axios").default;
@@ -35,6 +36,12 @@ class MusicModule {
 
             await this._playNextMusic();
         }
+    }
+
+    async search(message, args) {
+        const query = args.join(" ");
+        const result = await Youtube.search(query);
+        console.log(result);
     }
 
     async skip(message, args) {
