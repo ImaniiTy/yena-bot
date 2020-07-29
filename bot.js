@@ -1,9 +1,11 @@
 const Discord = require("discord.js");
 const botModules = require("./modules");
-const config = require(process.env.MODE === "DEV" ? "./bot_config_dev.json" : "./bot_config.json");
+const config = process.env.MODE === "DEV" ? require("./bot_config_dev.json") : require("./bot_config.json");
 const client = new Discord.Client();
 
 client.moongose = require("./mongoose_start");
+
+console.log(process.env.MODE);
 
 function loadCommands() {
     client.commands = new Discord.Collection();
