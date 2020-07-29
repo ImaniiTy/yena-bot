@@ -51,7 +51,7 @@ class MusicModule {
         };
         message.channel.send({ embed: Format.searchEmbed(message, results) }).then((sendedMessage) => {
             message.channel
-                .awaitMessages(filter, { max: 1, time: 20000, errors: ["max"] })
+                .awaitMessages(filter, { max: 1, time: 20000, errors: ["time", "max"]})
                 .then((collected) => {
                     const value = parseInt(collected.first().content);
                     this.play(message, [results[value - 1].url]);
