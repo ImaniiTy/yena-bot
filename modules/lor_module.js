@@ -3,7 +3,7 @@ const { Message, VoiceChannel } = require("discord.js");
 
 // https://americas.api.riotgames.com/lor/ranked/v1/leaderboards?api_key=RGAPI-1dd61f45-65e5-4b49-bb7d-18314254ef0c
 const baseURL = "https://americas.api.riotgames.com/lor";
-const apiKey = "RGAPI-74dbf32f-fdc6-4fe6-908c-be6f24654f85";
+const apiKey = process.env.LOR_API_KEY;
 
 class LorModule {
     /**
