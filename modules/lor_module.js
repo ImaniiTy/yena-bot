@@ -23,7 +23,7 @@ class LorModule {
             });
 
             const playerName = args.join(" ");
-            const playerData = result.data.players.filter((value) => value.name === playerName)[0];
+            const playerData = result.data.players.filter((value) => value.name.toLowerCase() === playerName.toLowerCase())[0];
 
             playerData
                 ? message.channel.send(`Rank: ${playerData.rank}  LP: ${playerData.lp}`)
