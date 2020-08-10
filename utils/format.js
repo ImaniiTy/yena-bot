@@ -15,7 +15,6 @@ class Format {
 
         const author = message.author.username;
         const authorIcon = message.author.avatarURL();
-        console.log(resultsString[3]);
 
         return {
             title: "**Type the song number to select it**",
