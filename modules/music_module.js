@@ -1,5 +1,5 @@
 const { Message, VoiceChannel } = require("discord.js");
-const Youtube = require("../utils/youtube");
+const { Youtube, YoutubeVideoInfo } = require("../utils/youtube");
 const Format = require("../utils/format");
 const ytdl = require("ytdl-core-discord");
 const mm = require("music-metadata");
@@ -23,18 +23,29 @@ class MusicModule {
      * @param {Message} message
      * @param {*} args
      */
-    async play(message, args) {
-        this.playlist.push(args[0]);
+    async play(message, args, ignoreSearch = false) {
+        try {
+            let videoInfo = args[0];
 
-        if (this.isPlaying) {
-            return;
+            if (!ignoreSearch) {
+                const id = Youtube.getVideoIdFromUrl(args[0]);
+                videoInfo = id ? await YoutubeVideoInfo.fromId(id) : (await Youtube.search(args.join(" ")))[0];
+            }
+
+            this.playlist.push(videoInfo);
+
+            if (this.isPlaying) {
+                return;
+            }
+
+            await this._tryConnectChannel(message);
+
+            this.isPlaying = true;
+
+            await this._playNextMusic();
+        } catch (error) {
+            console.log(error);
         }
-
-        await this._tryConnectChannel(message);
-
-        this.isPlaying = true;
-
-        await this._playNextMusic();
     }
 
     /**
@@ -51,10 +62,10 @@ class MusicModule {
         };
         message.channel.send({ embed: Format.searchEmbed(message, results) }).then((sendedMessage) => {
             message.channel
-                .awaitMessages(filter, { max: 1, time: 20000, errors: ["time", "max"]})
+                .awaitMessages(filter, { max: 1, time: 20000, errors: ["time", "max"] })
                 .then((collected) => {
                     const value = parseInt(collected.first().content);
-                    this.play(message, [results[value - 1].url]);
+                    this.play(message, [results[value - 1]], true);
                 })
                 .catch((collected) => {
                     console.log("error" + collected);
@@ -178,7 +189,7 @@ class MusicModule {
     }
 
     _getCurrentMusicPipe() {
-        return ytdl(this.currentMusic, { filter: "audioonly", quality: "highestaudio", highWaterMark: 1 << 25 });
+        return ytdl(this.currentMusic.url, { filter: "audioonly", quality: "highestaudio", highWaterMark: 1 << 25 });
     }
 
     _getCommands() {

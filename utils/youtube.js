@@ -10,33 +10,12 @@ const entitites = new Entitites();
 class Youtube {
     static async search(query) {
         try {
-            const result = await axios.get("/search", {
-                baseURL: baseAPIURL,
-                params: {
-                    part: "snippet",
-                    q: query,
-                    key: process.env.YOUTUBE_API_KEY,
-                    type: "video",
-                    maxResults: 6,
-                },
-            });
+            const results = await Youtube.searchVideo(query);
 
-            const ids = result.data.items.map((item) => item.id.videoId);
-            const aditionalInfo = await axios.get("/videos", {
-                baseURL: baseAPIURL,
-                params: {
-                    part: "contentDetails",
-                    id: ids,
-                    key: process.env.YOUTUBE_API_KEY,
-                },
-                paramsSerializer: function (params) {
-                    return stringify(params, { arrayFormat: "repeat" });
-                },
-            });
+            const ids = results.map((item) => item.id.videoId);
+            const aditionalInfo = await Youtube.getVideoInfo(ids);
 
-            return result.data.items.map(
-                (item, index) => new YoutubeVideoInfo({ ...item, ...aditionalInfo.data.items[index].contentDetails })
-            );
+            return results.map((item, index) => new YoutubeVideoInfo({ ...item, ...aditionalInfo[index].contentDetails }));
         } catch (error) {
             // console.log(error);
             console.log(error.response.data);
@@ -44,15 +23,60 @@ class Youtube {
             console.log(error.response.headers);
         }
     }
+
+    static async searchVideo(query, parts = "snippet") {
+        const results = await axios.get("/search", {
+            baseURL: baseAPIURL,
+            params: {
+                part: parts,
+                q: query,
+                key: process.env.YOUTUBE_API_KEY,
+                type: "video",
+                maxResults: 6,
+            },
+        });
+
+        return results.data.items;
+    }
+
+    static async getVideoInfo(ids, parts = "contentDetails") {
+        Array.isArray(ids) || (ids = [ids]);
+
+        const infos = await axios.get("/videos", {
+            baseURL: baseAPIURL,
+            params: {
+                part: parts,
+                id: ids,
+                key: process.env.YOUTUBE_API_KEY,
+            },
+            paramsSerializer: function (params) {
+                return stringify(params, { arrayFormat: "repeat" });
+            },
+        });
+
+        return infos.data.items;
+    }
+
+    static getVideoIdFromUrl(url) {
+        const rx = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+        const result = url.match(rx);
+        return result ? result[1] : null;
+    }
 }
 
 class YoutubeVideoInfo {
     constructor(rawData) {
-        this.url = baseVideoURL + rawData.id.videoId;
-        this.title = entitites.decode(rawData.snippet.title).replace(/\[/g, (m) => ``);
+        this.id = rawData.id.videoId || rawData.id;
+        this.url = baseVideoURL + this.id;
+        this.title = entitites.decode(rawData.snippet.title);
         this.thumbnailURL = rawData.snippet.thumbnails.default.url;
         this.description = rawData.snippet.description;
         this.duration = rawData.duration;
+    }
+
+    static async fromId(id) {
+        const info = (await Youtube.getVideoInfo(id, "contentDetails,snippet"))[0];
+        return new YoutubeVideoInfo(info);
     }
 
     getConvertedDuration() {
@@ -61,11 +85,31 @@ class YoutubeVideoInfo {
     }
 
     getTitleClamped(maxSize) {
-        if(this.title.length > maxSize) {
-            return `${this.title.substring(0, maxSize - 1)}...`;
+        if (this.title.length > maxSize) {
+            const clampedTitle = `${this.title.substring(0, maxSize - 1)}...`;
+            return this._sanitizeTitle(clampedTitle);
         }
 
         return this.title;
+    }
+
+    getVideoIdFromUrl(url) {
+        const rx = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+        const result = url.match(rx);
+        return result ? result[1] : null;
+    }
+
+    /**
+     *
+     * @param {String} str
+     */
+    _sanitizeTitle(str) {
+        if (str.split("[").length - 1 > str.split("]").length - 1) {
+            let newStr = [...str];
+            newStr[str.length - 4] = "]";
+            return newStr.join("");
+        }
+        return str;
     }
 
     getEmbed() {
@@ -73,4 +117,4 @@ class YoutubeVideoInfo {
     }
 }
 
-module.exports = Youtube;
+module.exports = {Youtube, YoutubeVideoInfo};
