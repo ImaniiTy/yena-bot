@@ -27,7 +27,7 @@ module.exports = {
         }
 
         // Insert in queue
-        const video_inserted = await music.queue_constructor([video_found]);
+        const video_inserted = await music.queue_constructor(message.author.id, [video_found]);
 
         if (music.isPlaying) {
             // [FT] Update msg   |  music.update_song_message(message)
