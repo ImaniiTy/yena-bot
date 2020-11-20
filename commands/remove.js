@@ -22,10 +22,10 @@ module.exports = {
 
 
         const command_options = { 
-            number: (message, num) => number(message, num),
-            cleanup: (message, args) => cleanup(message, args),
-            doubles: () => doubles(),
-            range: (message, args) => range(message, args)
+            number: (num) => number(message, num),
+            cleanup: (cleanup_args) => cleanup(message, cleanup_args),
+            doubles: () => doubles(message),
+            range: (range_args) => range(message, range_args)
         };
 
      
@@ -38,11 +38,9 @@ module.exports = {
         if (!isNaN(parseInt(args[0])) ) {
             command_options.number(parseInt(args[0]));
         } // Cleanup <@UserMention> / Doubles / Range <from> <to>
-        else if (!command_options[args[0].toLowerCase()](message, args)) {
+        else if (!command_options[args[0].toLowerCase()](args)) {
             return false
         }
-        
-        msg.msg_success(message, `Song removed.`);
         
         return true;
     },
@@ -51,12 +49,14 @@ module.exports = {
 function number(message, num) {
     // This index does not exist
     if (music.queue.length < num) {
-        msg.msg_error(message, `There\'s no song with index ``${num}`` in the queue.`);
+        msg.msg_error(message, `There\'s no song with index \`\`${num}\`\` in the queue.`);
         return false;
     }
 
     // Remove from queue
     music.queue.splice(num - 1, 1);
+
+    msg.msg_success(message, 'Song removed.');
     return true;
 }
 
@@ -72,16 +72,18 @@ function cleanup(message, args) {
     const new_queue = music.queue.filter( (song) => song.author !== user_id_for_remove ); 
     music.queue = new_queue;
     
+    msg.msg_success(message, 'Double songs removed.');
     return true;
 }
 
-function doubles() {
+function doubles(message) {
     // Removes songs from the queue.
     const new_queue = music.queue.filter(
         (song, index, self) => self.findIndex(value => value.title === song.title && value.url === song.url) === index
     );
     music.queue = new_queue;
 
+    msg.msg_success(message, 'Song removed.');
     return true;
 }
 
@@ -96,5 +98,6 @@ function range(message, args) {
 
     music.queue.splice(remove_from,remove_to);
 
+    msg.msg_success(message, 'Song removed.');
     return true;
 }
